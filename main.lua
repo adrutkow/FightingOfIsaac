@@ -34,12 +34,12 @@ end
 
 
 local function debugText()
-    local fighter0 = Fighters[1]
-    local str = ""
-    str = str .. "isGround" .. tostring(fighter0:isOnGround()) .. "\n"
-    str = str .. "isActionable" .. tostring(fighter0:isPlayerActionable()) .. "\n"
-    str = str .. "currentState" .. GetAnimationByState(fighter0:getCurrentState()) .. "\n"
-    Isaac.RenderText(str, 50, 50, 255, 255, 255, 255)
+    -- local fighter0 = Fighters[1]
+    -- local str = ""
+    -- str = str .. "isGround" .. tostring(fighter0:isOnGround()) .. "\n"
+    -- str = str .. "isActionable" .. tostring(fighter0:isPlayerActionable()) .. "\n"
+    -- str = str .. "currentState" .. GetAnimationByState(fighter0:getCurrentState()) .. "\n"
+    -- Isaac.RenderText(str, 50, 50, 255, 255, 255, 255)
 end
 
 local function onTick()
@@ -87,9 +87,7 @@ FighterMod:AddCallback(ModCallbacks.MC_POST_PLAYER_INIT, onPlayerInit)
 FighterMod:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, onNewRoom)
 FighterMod:AddCallback(ModCallbacks.MC_POST_RENDER, onPostRender)
 FighterMod:AddCallback(ModCallbacks.MC_INPUT_ACTION, Fighter.blockMovement, InputHook.GET_ACTION_VALUE)
---FighterMod:AddCallback(ModCallbacks.MC_INPUT_ACTION, Fighter.blockMovement1, InputHook.GET_ACTION_VALUE)
-
-FighterMod:AddCallback(ModCallbacks.MC_INPUT_ACTION, FighterMod.blockShot, InputHook.IS_ACTION_PRESSED)
+FighterMod:AddCallback(ModCallbacks.MC_INPUT_ACTION, Fighter.blockShot, InputHook.IS_ACTION_PRESSED)
 FighterMod:AddCallback(ModCallbacks.MC_POST_PLAYER_INIT, FighterMod.testfunc)
 FighterMod:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, onGameStart)
 

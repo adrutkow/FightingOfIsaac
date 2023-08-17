@@ -10,16 +10,14 @@ function Fighter:new(player)
         sprite = sprite,
         isActionable = true,
         state = 1,
-        playerID = PlayerID
+        playerID = PlayerID,
+        hurtboxes = {},
+        hitboxes = {},
     }
 
-    local function blockMovementCallback(entity, hook, but)
-        return self:blockMovement(entity, hook, but)
-    end
 
     self.__index = self
     PlayerID = PlayerID + 1
-    --FighterMod:AddCallback(ModCallbacks.MC_INPUT_ACTION, blockMovementCallback, InputHook.GET_ACTION_VALUE)
     print(PlayerID)
     return setmetatable(newObj, self)
 end
@@ -58,11 +56,6 @@ function Fighter:inputManager()
     end
 end
 
-function Fighter:draw()
-    self.sprite:Render(Vector(self.x, self.y))
-    self.sprite:Update()
-end
-
 function Fighter:jump()
     if not self:isPlayerActionable() then
         self.player.Velocity.Y = 0
@@ -74,6 +67,8 @@ function Fighter:jump()
     end 
 
     self.player:AddVelocity(Vector(0, -5))
+    table.insert(self.hurtboxes, Hitbox:new({-10, 0, 20, 100}, self.player, false))
+
 end
 
 function Fighter:isPlayerActionable()
@@ -206,6 +201,11 @@ function Fighter:animationManager()
     self.sprite:Render(pos)
     self.sprite:Update()
 
+    for i = 1, #self.hurtboxes do
+        print("hurtbox")
+        self.hurtboxes[i]:draw()
+    end
+
     -- hitboxSprite:Render(pos)
     -- hitboxSprite.Scale = Vector(4, 2)
     -- hitboxSprite:Render(pos + Vector(15, 10))
@@ -247,24 +247,6 @@ function Fighter:blockMovement(entity, hook, but)
         return 0;
     end
 end
-
-function Fighter:blockMovement1(entity, hook, but)
-    local index = 2
-    local fighter = Fighters[index]
-    if fighter == nil then
-        return
-    end
-
-
-    if fighter:isPlayerActionable() then 
-        return
-    end
-    if (but == ButtonAction.ACTION_LEFT or but == ButtonAction.ACTION_RIGHT or but == ButtonAction.ACTION_UP) then
-        return 0;
-    end
-end
-
-
 
 ---comment
 ---@param entity Entity
