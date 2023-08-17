@@ -13,6 +13,8 @@ function Fighter:new(player)
         playerID = PlayerID,
         hurtboxes = {},
         hitboxes = {},
+        gotHitThisFrame = false,
+        hitstunFrames = 0
     }
 
 
@@ -67,7 +69,9 @@ function Fighter:jump()
     end 
 
     self.player:AddVelocity(Vector(0, -5))
-    table.insert(self.hurtboxes, Hitbox:new({-10, 0, 20, 100}, self.player, false))
+    -- why 90
+    table.insert(self.hurtboxes, Hitbox:new({0, 0, 20, 100}, self.player, true, true))
+
 
 end
 
@@ -103,6 +107,7 @@ function Fighter:changeState(newState)
 end
 
 function Fighter:onStateChange()
+
     if self.state == STATE.JUMP then
         self:jump()
     end
@@ -112,6 +117,16 @@ function Fighter:onStateChange()
         local pos = Isaac.WorldToScreen(self.player.Position)
         local t = Isaac.Spawn(EntityType.ENTITY_TEAR, ProjectileVariant.PROJECTILE_COIN, 0, pos, Vector.Zero, nil)
         t:GetData()
+    end
+
+    -- TODO: temp fix?
+    if self.state == STATE.IDLE then
+        self:addHitbox(HITBOXES.Hitbox_Idle)
+    end
+
+    -- TODO: temp fix.
+    if self.state == STATE.GETHIT then
+        self:addHitbox(HITBOXES.Hitbox_Idle)
     end
 end
 
@@ -155,6 +170,11 @@ function GetAnimationByState(s)
 end
 
 function Fighter:stateManager()
+
+    if self.hitstunFrames > 0 then 
+        return
+    end
+
     if self.player.Velocity.Y >= 0 then
         if self:isOnGround() and (self:getCurrentState() == STATE.JUMP or self:getCurrentState() == STATE.JUMPKICK or self:getCurrentState() == STATE.FALLING) then
             self:changeState(STATE.IDLE)
@@ -170,6 +190,12 @@ function Fighter:checkAnimationFinish()
 
     local currentAnimIsActionable = ANIMATION_ACTIONABLE[self:getCurrentState()]
 
+    if self.sprite:IsFinished(GetAnimationByState(STATE.GETHIT)) then
+        if self.hitstunFrames > 0 then
+            return
+        end
+    end
+
     if self.sprite:IsFinished(GetAnimationByState(STATE.JUMP)) or self.sprite:IsFinished(GetAnimationByState(STATE.JUMPKICK)) then
         self:changeState(STATE.FALLING)
     end
@@ -178,9 +204,14 @@ function Fighter:checkAnimationFinish()
         self:makePlayerActionable()
         self:changeState(STATE.IDLE)
     end
+
 end
 
 function Fighter:animationManager()
+    
+    if self.hitstunFrames > 0 then
+        self.hitstunFrames = self.hitstunFrames - 1
+    end
 
     self:checkAnimationFinish()
     self:stateManager()
@@ -197,14 +228,17 @@ function Fighter:animationManager()
         end
     end
 
-
     self.sprite:Render(pos)
     self.sprite:Update()
 
+    for i = 1, #self.hitboxes do
+        self.hitboxes[i]:draw()
+    end
+
     for i = 1, #self.hurtboxes do
-        print("hurtbox")
         self.hurtboxes[i]:draw()
     end
+
 
     -- hitboxSprite:Render(pos)
     -- hitboxSprite.Scale = Vector(4, 2)
@@ -213,10 +247,68 @@ function Fighter:animationManager()
     -- hitboxSprite:Update()
 end
 
+function Fighter:animationTriggers()
+    if self.sprite:IsEventTriggered("Hurtbox_Punch") then
+        print("PUNCH FLAG")
+        self:addHitbox(HITBOXES.Hurtbox_Punch)
+    end
+
+    if self.sprite:IsEventTriggered("Hurtbox_END") then
+        self.hurtboxes = {}
+    end
+
+    if self.sprite:IsEventTriggered("Hitbox_Idle") then
+        print("IDLE FLAG")
+        self.hitboxes = {}
+        self:addHitbox(HITBOXES.Hitbox_Idle)
+    end
+end
+
 function Fighter:getOtherFighter()
     for i = 1, #Fighters do
-        if i ~= self.index then
+        if Fighters[i].index ~= self.index then
             return Fighters[i]
+        end
+    end
+end
+
+
+function Fighter:addHitbox(HITBOX)
+    local hitbox = Hitbox:new(HITBOXES_DATA_RECT[HITBOX], self.player, HITBOXES_DATA_ATTACHED[HITBOX], HITBOXES_DATA_ISHURTBOX[HITBOX])
+
+    if HITBOXES_DATA_ISHURTBOX[HITBOX] == true then
+        table.insert(self.hurtboxes, hitbox)
+    else
+        table.insert(self.hitboxes, hitbox)
+    end
+end
+
+function Fighter:GetHit()
+    self.gotHitThisFrame = false
+    self.hurtboxes = {}
+    self.hitboxes = {}
+    self:changeState(STATE.GETHIT)
+    self.hitstunFrames = 30
+    Isaac.GetPlayer(self.PlayerID):TakeDamage(1, 0, EntityRef(Isaac.GetPlayer(0)), 0)
+end
+
+function Fighter:CheckIfHitEnemy()
+    local otherFighter = self:getOtherFighter()
+    if otherFighter == nil then
+        print("not other fighter")
+        return
+    end
+    for i = 1, #self.hurtboxes do
+        for j = 1, #otherFighter.hitboxes do
+            local rect1 = self.hurtboxes[i]:getWorldRect()
+            local rect2 = otherFighter.hitboxes[j]:getWorldRect()
+
+            if RectCollide(rect1, rect2) then
+                otherFighter.gotHitThisFrame = true
+                print(otherFighter.playerID .. "GOT HIT")
+                self.hurtboxes = {}
+                return
+            end
         end
     end
 end

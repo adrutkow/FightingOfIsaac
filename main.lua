@@ -45,8 +45,18 @@ end
 local function onTick()
     for i = 1, #Fighters do
         Fighters[i]:inputManager()
+        Fighters[i]:animationTriggers()
         Fighters[i]:animationManager()
+        Fighters[i]:CheckIfHitEnemy()
     end
+    
+    for i = 1, #Fighters do
+        print(Fighters[1].playerID .. "CHECK")
+        if Fighters[i].gotHitThisFrame == true then
+            Fighters[i]:GetHit()
+        end
+    end
+
     debugText()
 end
 
@@ -76,12 +86,6 @@ function BlockMovementTest(entity, hook, but)
     end
     
 end
-
-
-
-
-
-
 
 FighterMod:AddCallback(ModCallbacks.MC_POST_PLAYER_INIT, onPlayerInit)
 FighterMod:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, onNewRoom)

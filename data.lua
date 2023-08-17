@@ -7,6 +7,7 @@ STATE = {
     JUMP = 4,
     JUMPKICK = 5,
     FALLING = 6,
+    GETHIT = 7,
 }
 
 ANIMATIONS = {
@@ -16,6 +17,7 @@ ANIMATIONS = {
     "Jump",
     "JumpKick",
     "Falling",
+    "GetHit"
 }
 
 ANIMATION_ACTIONABLE = {
@@ -23,6 +25,7 @@ ANIMATION_ACTIONABLE = {
     true,
     false,
     true,
+    false,
     false,
     false,
 }
@@ -33,7 +36,8 @@ ANIMATION_STOPVEL = {
     true,
     false,
     false,
-    false
+    false,
+    false,
 }
 
 ANIMATION_TRANSITIONS = {
@@ -42,7 +46,31 @@ ANIMATION_TRANSITIONS = {
     {},
     {5, 6},
     {1, 6},
-    {1}
+    {1},
+    {}
+}
+
+HITBOXES_DATA_RECT = {
+    {-12, 0, 25, 100},
+    {0, -60, 64, 28},
+}
+
+HITBOXES_DATA_ATTACHED = {
+    true,
+    true,
+
+}
+
+HITBOXES_DATA_ISHURTBOX = {
+    false,
+    true,
+
+}
+
+HITBOXES = {
+    Hitbox_Idle = 1,
+    Hurtbox_Punch = 2,
+
 }
 
 
