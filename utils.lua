@@ -44,17 +44,6 @@ function RectCollide(rect1, rect2)
     local x1, y1, w1, h1 = rect1[1], rect1[2], rect1[3], rect1[4]
     local x2, y2, w2, h2 = rect2[1], rect2[2], rect2[3], rect2[4]
 
-    for i, v in ipairs(rect1) do
-        print(i .. " " .. v)
-    end
-
-    print("SSSSS")
-
-    for i, v in ipairs(rect2) do
-        print(i .. " " .. v)
-    end
-
-
     return x1 < x2 + w2 and
            x1 + w1 > x2 and
            y1 - h1 < y2 and

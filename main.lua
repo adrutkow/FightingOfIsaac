@@ -9,10 +9,9 @@ local sprite = Sprite()
 local state = 1
 local isActionable = true
 Fighters = {}
+SHOW_HITBOXES = true
 
 local function onGameStart()
-    PlayerID = 0
-
 end
 
 local function onNewRoom()
@@ -22,24 +21,45 @@ local function onNewRoom()
     if level:GetCurrentRoomDesc().Data.Variant ~= 900 and level:GetCurrentRoomIndex() ~= level:GetStartingRoomIndex() then
         Isaac.ExecuteCommand("goto d.900")
     end
+
+    Isaac.GetPlayer(0).Position = Vector(200, 350)
+    if Isaac.GetPlayer(1) ~= nil then
+        Isaac.GetPlayer(1).Position = Vector(400, 350)
+    end
+end
+
+local function startGame()
+    Isaac.ExecuteCommand("goto d.900")
+end
+
+local function addFighterToGame(entityPlayer)
+    table.insert(Fighters, Fighter:new(entityPlayer))
+    if entityPlayer ~= nil then
+        entityPlayer:GetSprite().Color = Color(255, 255, 255, 0)
+    end
+end
+
+---comment
+---@param entityPlayer EntityPlayer
+local function onPlayerInit(entityPlayer)
+    if entityPlayer == nil then
+        addFighterToGame()
+    else
+        addFighterToGame(Isaac.GetPlayer(Game():GetNumPlayers() - 1))
+    end
+
 end
 
 
-local function onPlayerInit()
-    local p = Isaac.GetPlayer(PlayerID)
-    p:GetSprite().Color = Color(255, 255, 255, 0)
-    local f = Fighter:new(p)
-    table.insert(Fighters, f)
-end
 
 
 local function debugText()
-    -- local fighter0 = Fighters[1]
-    -- local str = ""
+    local fighter0 = Fighters[1]
+    local str = ""
     -- str = str .. "isGround" .. tostring(fighter0:isOnGround()) .. "\n"
     -- str = str .. "isActionable" .. tostring(fighter0:isPlayerActionable()) .. "\n"
     -- str = str .. "currentState" .. GetAnimationByState(fighter0:getCurrentState()) .. "\n"
-    -- Isaac.RenderText(str, 50, 50, 255, 255, 255, 255)
+    Isaac.RenderText(str, 50, 50, 255, 255, 255, 255)
 end
 
 local function onTick()
@@ -51,40 +71,24 @@ local function onTick()
     end
     
     for i = 1, #Fighters do
-        print(Fighters[1].playerID .. "CHECK")
         if Fighters[i].gotHitThisFrame == true then
-            Fighters[i]:GetHit()
+            if Fighters[i]:isBlocking() then
+                Fighters[i]:block()
+            else
+                Fighters[i]:getHit()
+            end
+            Fighters[i].gotHitThisFrame = false
         end
     end
 
-    debugText()
+    --debugText()
+    if Input.IsActionTriggered(ButtonAction.ACTION_BOMB, 0) then
+        startGame()
+    end
 end
 
 local function onPostRender()
     onTick()
-end
-
-
-
-
----comment
----@param entity Entity
----@param hook InputHook
----@param but ButtonAction
-function BlockMovementTest(entity, hook, but)
-
-    if entity ~= nil then
-        print("WOW!!")
-        print(entity["Name"])
-        print(entity.Type)
-        getTableKeys(entity)
-    end
-    if entity.Type == EntityType.ENTITY_PLAYER then
-        print("VALID")
-        local id = Utils.getPlayerID(entity:ToPlayer())
-        return Fighters[id + 1]:blockMovement(entity, hook, but)
-    end
-    
 end
 
 FighterMod:AddCallback(ModCallbacks.MC_POST_PLAYER_INIT, onPlayerInit)

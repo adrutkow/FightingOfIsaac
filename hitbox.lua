@@ -19,6 +19,11 @@ function Hitbox:new(rect, owner, attached, isHurtbox)
 end
 
 function Hitbox:draw()
+
+    if SHOW_HITBOXES == false then
+        return
+    end
+
     self.sprite:Play("Idle")
 
     local owner_pos = Isaac.WorldToScreen(self.owner.Position)

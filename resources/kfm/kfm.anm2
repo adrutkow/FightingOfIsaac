@@ -1,5 +1,5 @@
 <AnimatedActor>
-	<Info CreatedBy="Unknown" CreatedOn="17/08/2023 16:19:59" Version="40" Fps="30"/>
+	<Info CreatedBy="Unknown" CreatedOn="18/08/2023 14:55:33" Version="42" Fps="30"/>
 	<Content>
 		<Spritesheets>
 			<Spritesheet Path="idle.png" Id="0"/>
@@ -8,6 +8,7 @@
 			<Spritesheet Path="jump.png" Id="3"/>
 			<Spritesheet Path="jumpkick.png" Id="4"/>
 			<Spritesheet Path="gethit.png" Id="5"/>
+			<Spritesheet Path="block.png" Id="6"/>
 		</Spritesheets>
 		<Layers>
 			<Layer Name="Spritesheet0" Id="0" SpritesheetId="0"/>
@@ -16,12 +17,16 @@
 			<Layer Name="Spritesheet3" Id="3" SpritesheetId="3"/>
 			<Layer Name="Spritesheet4" Id="4" SpritesheetId="4"/>
 			<Layer Name="spritesheet5" Id="5" SpritesheetId="5"/>
+			<Layer Name="spritesheet6" Id="6" SpritesheetId="6"/>
 		</Layers>
 		<Nulls/>
 		<Events>
 			<Event Name="Hurtbox_Punch" Id="0"/>
 			<Event Name="Hurtbox_END" Id="1"/>
 			<Event Name="Hitbox_Idle" Id="2"/>
+			<Event Name="Hurtbox_JumpKick" Id="3"/>
+			<Event Name="Hitbox_JumpKick_0" Id="4"/>
+			<Event Name="Hitbox_JumpKick_1" Id="5"/>
 		</Events>
 	</Content>
 	<Animations DefaultAnimation="Idle">
@@ -56,6 +61,7 @@
 				<LayerAnimation LayerId="3" Visible="true"/>
 				<LayerAnimation LayerId="4" Visible="true"/>
 				<LayerAnimation LayerId="5" Visible="true"/>
+				<LayerAnimation LayerId="6" Visible="true"/>
 			</LayerAnimations>
 			<NullAnimations/>
 			<Triggers>
@@ -108,6 +114,7 @@
 				<LayerAnimation LayerId="3" Visible="true"/>
 				<LayerAnimation LayerId="4" Visible="true"/>
 				<LayerAnimation LayerId="5" Visible="true"/>
+				<LayerAnimation LayerId="6" Visible="true"/>
 			</LayerAnimations>
 			<NullAnimations/>
 			<Triggers/>
@@ -130,6 +137,7 @@
 				<LayerAnimation LayerId="3" Visible="true"/>
 				<LayerAnimation LayerId="4" Visible="true"/>
 				<LayerAnimation LayerId="5" Visible="true"/>
+				<LayerAnimation LayerId="6" Visible="true"/>
 			</LayerAnimations>
 			<NullAnimations/>
 			<Triggers>
@@ -158,6 +166,7 @@
 				</LayerAnimation>
 				<LayerAnimation LayerId="4" Visible="true"/>
 				<LayerAnimation LayerId="5" Visible="true"/>
+				<LayerAnimation LayerId="6" Visible="true"/>
 			</LayerAnimations>
 			<NullAnimations/>
 			<Triggers/>
@@ -179,9 +188,14 @@
 					<Frame XPosition="0" YPosition="-25" XPivot="26" YPivot="88" XCrop="0" YCrop="0" Width="64" Height="90" XScale="100" YScale="100" Delay="4" Visible="true" RedTint="255" GreenTint="255" BlueTint="255" AlphaTint="255" RedOffset="0" GreenOffset="0" BlueOffset="0" Rotation="0" Interpolated="false"/>
 				</LayerAnimation>
 				<LayerAnimation LayerId="5" Visible="true"/>
+				<LayerAnimation LayerId="6" Visible="true"/>
 			</LayerAnimations>
 			<NullAnimations/>
-			<Triggers/>
+			<Triggers>
+				<Trigger EventId="4" AtFrame="0"/>
+				<Trigger EventId="5" AtFrame="6"/>
+				<Trigger EventId="1" AtFrame="25"/>
+			</Triggers>
 		</Animation>
 		<Animation Name="Falling" FrameNum="8" Loop="true">
 			<RootAnimation>
@@ -197,6 +211,7 @@
 				</LayerAnimation>
 				<LayerAnimation LayerId="4" Visible="true"/>
 				<LayerAnimation LayerId="5" Visible="true"/>
+				<LayerAnimation LayerId="6" Visible="true"/>
 			</LayerAnimations>
 			<NullAnimations/>
 			<Triggers/>
@@ -218,11 +233,34 @@
 					<Frame XPosition="0" YPosition="0" XPivot="53" YPivot="92" XCrop="202" YCrop="0" Width="88" Height="94" XScale="100" YScale="100" Delay="2" Visible="true" RedTint="255" GreenTint="255" BlueTint="255" AlphaTint="255" RedOffset="0" GreenOffset="0" BlueOffset="0" Rotation="0" Interpolated="false"/>
 					<Frame XPosition="0" YPosition="0" XPivot="53" YPivot="93" XCrop="290" YCrop="0" Width="89" Height="94" XScale="100" YScale="100" Delay="2" Visible="true" RedTint="255" GreenTint="255" BlueTint="255" AlphaTint="255" RedOffset="0" GreenOffset="0" BlueOffset="0" Rotation="0" Interpolated="false"/>
 				</LayerAnimation>
+				<LayerAnimation LayerId="6" Visible="true"/>
 			</LayerAnimations>
 			<NullAnimations/>
 			<Triggers>
 				<Trigger EventId="2" AtFrame="0"/>
 			</Triggers>
+		</Animation>
+		<Animation Name="Block" FrameNum="32" Loop="false">
+			<RootAnimation>
+				<Frame XPosition="0" YPosition="0" XScale="100" YScale="100" Delay="1" Visible="true" RedTint="255" GreenTint="255" BlueTint="255" AlphaTint="255" RedOffset="0" GreenOffset="0" BlueOffset="0" Rotation="0" Interpolated="false"/>
+			</RootAnimation>
+			<LayerAnimations>
+				<LayerAnimation LayerId="0" Visible="true"/>
+				<LayerAnimation LayerId="1" Visible="true"/>
+				<LayerAnimation LayerId="2" Visible="true"/>
+				<LayerAnimation LayerId="3" Visible="true"/>
+				<LayerAnimation LayerId="4" Visible="true"/>
+				<LayerAnimation LayerId="5" Visible="true"/>
+				<LayerAnimation LayerId="6" Visible="true">
+					<Frame XPosition="0" YPosition="0" XPivot="26" YPivot="105" XCrop="0" YCrop="0" Width="50" Height="106" XScale="100" YScale="100" Delay="3" Visible="true" RedTint="255" GreenTint="255" BlueTint="255" AlphaTint="255" RedOffset="0" GreenOffset="0" BlueOffset="0" Rotation="0" Interpolated="false"/>
+					<Frame XPosition="0" YPosition="0" XPivot="28" YPivot="105" XCrop="52" YCrop="0" Width="52" Height="106" XScale="100" YScale="100" Delay="3" Visible="true" RedTint="255" GreenTint="255" BlueTint="255" AlphaTint="255" RedOffset="0" GreenOffset="0" BlueOffset="0" Rotation="0" Interpolated="false"/>
+					<Frame XPosition="0" YPosition="0" XPivot="34" YPivot="105" XCrop="103" YCrop="0" Width="59" Height="106" XScale="100" YScale="100" Delay="20" Visible="true" RedTint="255" GreenTint="255" BlueTint="255" AlphaTint="255" RedOffset="0" GreenOffset="0" BlueOffset="0" Rotation="0" Interpolated="false"/>
+					<Frame XPosition="0" YPosition="0" XPivot="28" YPivot="105" XCrop="52" YCrop="0" Width="52" Height="106" XScale="100" YScale="100" Delay="3" Visible="true" RedTint="255" GreenTint="255" BlueTint="255" AlphaTint="255" RedOffset="0" GreenOffset="0" BlueOffset="0" Rotation="0" Interpolated="false"/>
+					<Frame XPosition="0" YPosition="0" XPivot="26" YPivot="105" XCrop="0" YCrop="0" Width="50" Height="106" XScale="100" YScale="100" Delay="3" Visible="true" RedTint="255" GreenTint="255" BlueTint="255" AlphaTint="255" RedOffset="0" GreenOffset="0" BlueOffset="0" Rotation="0" Interpolated="false"/>
+				</LayerAnimation>
+			</LayerAnimations>
+			<NullAnimations/>
+			<Triggers/>
 		</Animation>
 	</Animations>
 </AnimatedActor>
