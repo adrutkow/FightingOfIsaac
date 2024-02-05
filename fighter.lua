@@ -32,6 +32,7 @@ function Fighter:new(player)
         blockstunFrames = 0,
         isDummy = false,
         comboCount = 0,
+        health = 200,
     }
 
     self.__index = self
@@ -368,6 +369,8 @@ function Fighter:isFacingRight()
         else
             return true
         end
+    else
+        return true
     end
 end
 
@@ -408,6 +411,7 @@ function Fighter:getHit()
     self.hurtboxes = {}
     self.hitboxes = {}
     self:changeState(STATE.GETHIT)
+    self.health = self.health - 10
 
     if self.hitboxHitByThisFrame.hitVelocity then
         --self.player:AddVelocity(self.hitboxHitByThisFrame.hitVelocity)

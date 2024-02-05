@@ -1,11 +1,14 @@
 FighterMod = RegisterMod("Fighter", 1)
+require("healthbar")
 local Hitbox = require("hitbox")
 local Fighter = require("fighter")
 local Data = require("data")
 local Utils = require("utils")
 local game = Game()
 Fighters = {}
-SHOW_HITBOXES = true
+UIElements = {}
+SHOW_HITBOXES = false
+SLOWDOWN = false
 
 local function onGameStart()
 end
@@ -21,9 +24,9 @@ local function onNewRoom()
         Isaac.ExecuteCommand("goto d.900")
     end
 
-    Isaac.GetPlayer(0).Position = Vector(200, 350)
+    Isaac.GetPlayer(0).Position = Vector(480, 650)
     if Isaac.GetPlayer(1) ~= nil then
-        Isaac.GetPlayer(1).Position = Vector(400, 350)
+        Isaac.GetPlayer(1).Position = Vector(680, 650)
     end
 
 end
@@ -39,6 +42,15 @@ local function addFighterToGame(entityPlayer)
     return newFighter
 end
 
+local function initUI()
+    Game():GetHUD():SetVisible(false)
+    UIElements = {}
+    for i = 1, 2 do
+        local newHealthBar = HealthBar:new(i)
+        table.insert(UIElements, newHealthBar)
+    end
+end
+
 local function startGame()
     for i in pairs(Fighters) do
         Fighters[i] = nil
@@ -52,7 +64,7 @@ local function startGame()
 
     local mainPlayerIndex = Isaac.GetPlayer(0).Index
 
-
+    initUI()
     -- if #Fighters > 1 then
     --     for i = 2, #Fighters do
     --         Fighters[i].isDummy = true
@@ -82,8 +94,19 @@ local function debugText()
 end
 
 local function onTick()
+
+
     for i = 1, #Fighters do
-        Fighters[i]:nextFrame()
+        local skipFrame = false
+        if SLOWDOWN then
+            if Isaac.GetFrameCount() % 2 == 0 then
+                skipFrame = true
+            end
+        end
+
+        if not skipFrame then 
+            Fighters[i]:nextFrame()
+        end
         Fighters[i]:inputManager()
         Fighters[i]:stateManager()
         Fighters[i]:animationTriggers()
@@ -95,6 +118,18 @@ local function onTick()
 
     for i = 1, #Fighters do
         Fighters[i]:CheckIfHitEnemy()
+    end
+
+    for i = 1, #UIElements do
+        UIElements[i]:draw()
+    end
+
+    if Fighters[1] ~= nil then
+        Isaac.RenderText("Combo: " .. Fighters[1].comboCount, 370, 30, 1, 1, 1, 255)
+    end
+
+    if Fighters[2] ~= nil then
+        Isaac.RenderText("Combo: " .. Fighters[2].comboCount, 60, 30, 1, 1, 1, 255)
     end
 
     for i = 1, #Fighters do
@@ -114,21 +149,24 @@ local function onTick()
         --     Fighters[i].player.Velocity = Vector(0, 10)
         -- end
         
-        if Fighters[1] ~= nil then
-            Isaac.RenderText("Combo: " .. Fighters[1].comboCount, 350, 30, 1, 1, 1, 255)
-        end
 
-        if Fighters[2] ~= nil then
-            Isaac.RenderText("Combo: " .. Fighters[2].comboCount, 50, 30, 1, 1, 1, 255)
-        end
 
 
     end
+
+    if SLOWDOWN then
+        for i = 1, #Fighters do
+            Fighters[i].player.Velocity = Vector( Fighters[i].player.Velocity.X / 2,  Fighters[i].player.Velocity.Y / 2)
+        end
+    end
+
+
 
     --debugText()
     if Input.IsActionTriggered(ButtonAction.ACTION_BOMB, 0) then
         startGame()
     end
+    print(Isaac.GetPlayer(0).Velocity.X)
 end
 
 local function onPostRender()
@@ -136,8 +174,16 @@ local function onPostRender()
 end
 
 function FighterMod:debug()
-    print("TEST")
+    local newHealthBar = HealthBar:new()
+    table.insert(UIElements, newHealthBar)
 end
+
+function prePlayerUpdate()
+    print("-------------")
+    print(Isaac.GetPlayer(0).Velocity.X)
+end
+
+
 
 FighterMod:AddCallback(ModCallbacks.MC_POST_PLAYER_INIT, onPlayerInit)
 FighterMod:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, onNewRoom)
@@ -146,5 +192,6 @@ FighterMod:AddCallback(ModCallbacks.MC_INPUT_ACTION, Fighter.blockMovement, Inpu
 FighterMod:AddCallback(ModCallbacks.MC_INPUT_ACTION, Fighter.blockShot, InputHook.IS_ACTION_PRESSED)
 FighterMod:AddCallback(ModCallbacks.MC_POST_PLAYER_INIT, FighterMod.testfunc)
 FighterMod:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, onGameStart)
+FighterMod:AddCallback(ModCallbacks.MC_POST_PLAYER_UPDATE, prePlayerUpdate)
 
 
