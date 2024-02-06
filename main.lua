@@ -166,7 +166,6 @@ local function onTick()
     if Input.IsActionTriggered(ButtonAction.ACTION_BOMB, 0) then
         startGame()
     end
-    print(Isaac.GetPlayer(0).Velocity.X)
 end
 
 local function onPostRender()
@@ -178,10 +177,7 @@ function FighterMod:debug()
     table.insert(UIElements, newHealthBar)
 end
 
-function prePlayerUpdate()
-    print("-------------")
-    print(Isaac.GetPlayer(0).Velocity.X)
-end
+
 
 
 
@@ -192,6 +188,5 @@ FighterMod:AddCallback(ModCallbacks.MC_INPUT_ACTION, Fighter.blockMovement, Inpu
 FighterMod:AddCallback(ModCallbacks.MC_INPUT_ACTION, Fighter.blockShot, InputHook.IS_ACTION_PRESSED)
 FighterMod:AddCallback(ModCallbacks.MC_POST_PLAYER_INIT, FighterMod.testfunc)
 FighterMod:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, onGameStart)
-FighterMod:AddCallback(ModCallbacks.MC_POST_PLAYER_UPDATE, prePlayerUpdate)
 
 

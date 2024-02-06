@@ -33,6 +33,7 @@ function Fighter:new(player)
         isDummy = false,
         comboCount = 0,
         health = 200,
+        isDead = false,
     }
 
     self.__index = self
@@ -74,7 +75,21 @@ function Fighter:inputManager()
         return
     end
 
+
+    if Input.IsActionPressed(ButtonAction.ACTION_DOWN, controllerID) then
+        self:tryChangeState(STATE.CROUCH)
+    else
+        if self:getCurrentState() == STATE.CROUCH then
+            self:tryChangeState(STATE.IDLE)
+        end
+    end
+
     if Input.IsActionTriggered(ButtonAction.ACTION_SHOOTRIGHT, controllerID) then
+
+        if self:isCrouching() then
+            self:tryChangeState(STATE.CROUCHKICK)
+        end
+
         if self:isOnGround() then
             self:tryChangeState(STATE.PUNCH)
         else
@@ -84,6 +99,11 @@ function Fighter:inputManager()
     end
 
     if Input.IsActionTriggered(ButtonAction.ACTION_SHOOTLEFT, controllerID) then
+
+        if self:isCrouching() then
+            self:tryChangeState(STATE.CROUCHKICK)
+        end
+
         if self:isOnGround() then
             self:tryChangeState(STATE.UPPERCUT)
         else
@@ -178,6 +198,10 @@ function Fighter:isOnGround()
     return Utils:numberIsBasicallyX(self.player.Position.Y, 650)
 end
 
+function Fighter:isCrouching()
+    return self:getCurrentState() == STATE.CROUCH
+end
+
 function Fighter:canStateTransitionInto(state0, state1)
 
     if STATE_DATA[state0].hitTransitions ~= nil then
@@ -216,6 +240,12 @@ function Fighter:isBlocking()
     if self.hitstunFrames > 0 then
         return false
     end
+
+    if not self:isPlayerActionable() then
+        return false
+    end
+
+
     local controllerID = self.player.ControllerIndex
     if (Input.IsActionPressed(ButtonAction.ACTION_LEFT, controllerID) and self:isFacingRight() or
         Input.IsActionPressed(ButtonAction.ACTION_RIGHT, controllerID) and not self:isFacingRight()) then
@@ -288,6 +318,16 @@ end
 function Fighter:stateManager()
 
     local state = self:getCurrentState()
+
+
+    if self.dead and (state ~= STATE.FREEFALLDOWN or state ~= STATE.GROUND) then
+        if not self:isOnGround() then
+            self:changeState(STATE.FREEFALLDOWN)
+        else
+            self:changeState(STATE.GROUND)
+        end
+    end
+
     
     if state == STATE.FREEFALLUP then
         if self.player.Velocity.Y >= 0 then
@@ -413,6 +453,9 @@ function Fighter:getHit()
     self:changeState(STATE.GETHIT)
     self.health = self.health - 10
 
+
+
+
     if self.hitboxHitByThisFrame.hitVelocity then
         --self.player:AddVelocity(self.hitboxHitByThisFrame.hitVelocity)
         self:applyVelocity(self.hitboxHitByThisFrame.hitVelocity)
@@ -421,6 +464,10 @@ function Fighter:getHit()
             self:setVelocity(0, 0)
             self:applyVelocity(Vector(1, -3))
         end
+    end
+
+    if self.health <= 0 then
+        self.dead = true
     end
 
     self.sprite.Color = Color(255, 0, 0)

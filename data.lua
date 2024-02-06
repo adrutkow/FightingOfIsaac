@@ -14,6 +14,9 @@ STATE = {
     FREEFALLDOWN = 11,
     GROUND = 12,
     RECOVER = 13,
+    CROUCH = 14,
+    CROUCHKICK = 15,
+
 }
 
 local stateCount = 0
@@ -260,6 +263,49 @@ STATE_DATA[STATE.RECOVER] = {
     actionable = false,
     stopVelocity = false,
     transitions = {STATE.IDLE},
+}
+
+STATE_DATA[STATE.CROUCH] = {
+    animation = "Crouch",
+    actionable = false,
+    stopVelocity = false,
+    transitions = {STATE.IDLE, STATE.CROUCHKICK},
+    hitboxes = {
+        {
+            rect = {-12, 0, 25, 72},
+            attached = true,
+            isHurtbox = true,
+            frameStart = 0,
+        },
+    }
+}
+
+STATE_DATA[STATE.CROUCHKICK] = {
+    animation = "CrouchKick",
+    actionable = false,
+    stopVelocity = true,
+    transitions = {},
+    hitboxes = {
+        {
+            rect = {-35, 0, 35, 58},
+            attached = true,
+            isHurtbox = true,
+            frameStart = 0,
+        },
+        {
+            rect = {-35, 0, 90, 20},
+            attached = true,
+            isHurtbox = true,
+            frameStart = 0,
+        },
+        {
+            rect = {8, 0, 45, 15},
+            attached = true,
+            isHurtbox = false,
+            eventTrigger = "HITBOX1_START",
+            stopTrigger = "HITBOX1_END",
+        },
+    }
 }
 
 return Data
