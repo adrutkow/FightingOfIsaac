@@ -241,7 +241,13 @@ function Fighter:isBlocking()
         return false
     end
 
-    if not self:isPlayerActionable() then
+
+    -- TODO: TEMPFIX
+    if not self:isPlayerActionable() and not self:isCrouching() then
+        return false
+    end
+
+    if not self:isOnGround() then
         return false
     end
 
@@ -255,7 +261,13 @@ function Fighter:isBlocking()
 end
 
 function Fighter:block()
-    self:changeState(STATE.BLOCK)
+
+    if self:isCrouching() then
+        self:changeState(STATE.CROUCHBLOCK)
+    else
+        self:changeState(STATE.BLOCK)
+    end
+
     self.blockstunFrames = 16
 end
 

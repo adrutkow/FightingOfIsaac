@@ -16,6 +16,7 @@ STATE = {
     RECOVER = 13,
     CROUCH = 14,
     CROUCHKICK = 15,
+    CROUCHBLOCK = 16,
 
 }
 
@@ -304,6 +305,21 @@ STATE_DATA[STATE.CROUCHKICK] = {
             isHurtbox = false,
             eventTrigger = "HITBOX1_START",
             stopTrigger = "HITBOX1_END",
+        },
+    }
+}
+
+STATE_DATA[STATE.CROUCHBLOCK] = {
+    animation = "CrouchBlock",
+    actionable = false,
+    stopVelocity = false,
+    transitions = {},
+    hitboxes = {
+        {
+            rect = {-15, 0, 35, 60},
+            attached = true,
+            isHurtbox = true,
+            frameStart = 0,
         },
     }
 }
