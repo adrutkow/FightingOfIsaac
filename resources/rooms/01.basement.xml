@@ -5582,82 +5582,82 @@
 			<entity type="10000" variant="0" subtype="0" weight="1.0"/>
 		</spawn>
 		<spawn x="0" y="13">
-			<entity type="1900" variant="0" subtype="0" weight="1.0"/>
+			<entity type="10000" variant="0" subtype="0" weight="1.0"/>
 		</spawn>
 		<spawn x="1" y="13">
-			<entity type="1900" variant="0" subtype="0" weight="1.0"/>
+			<entity type="10000" variant="0" subtype="0" weight="1.0"/>
 		</spawn>
 		<spawn x="2" y="13">
-			<entity type="1900" variant="0" subtype="0" weight="1.0"/>
+			<entity type="10000" variant="0" subtype="0" weight="1.0"/>
 		</spawn>
 		<spawn x="3" y="13">
-			<entity type="1900" variant="0" subtype="0" weight="1.0"/>
+			<entity type="10000" variant="0" subtype="0" weight="1.0"/>
 		</spawn>
 		<spawn x="4" y="13">
-			<entity type="1900" variant="0" subtype="0" weight="1.0"/>
+			<entity type="10000" variant="0" subtype="0" weight="1.0"/>
 		</spawn>
 		<spawn x="5" y="13">
-			<entity type="1900" variant="0" subtype="0" weight="1.0"/>
+			<entity type="10000" variant="0" subtype="0" weight="1.0"/>
 		</spawn>
 		<spawn x="6" y="13">
-			<entity type="1900" variant="0" subtype="0" weight="1.0"/>
+			<entity type="10000" variant="0" subtype="0" weight="1.0"/>
 		</spawn>
 		<spawn x="7" y="13">
-			<entity type="1900" variant="0" subtype="0" weight="1.0"/>
+			<entity type="10000" variant="0" subtype="0" weight="1.0"/>
 		</spawn>
 		<spawn x="8" y="13">
-			<entity type="1900" variant="0" subtype="0" weight="1.0"/>
+			<entity type="10000" variant="0" subtype="0" weight="1.0"/>
 		</spawn>
 		<spawn x="9" y="13">
-			<entity type="1900" variant="0" subtype="0" weight="1.0"/>
+			<entity type="10000" variant="0" subtype="0" weight="1.0"/>
 		</spawn>
 		<spawn x="10" y="13">
-			<entity type="1900" variant="0" subtype="0" weight="1.0"/>
+			<entity type="10000" variant="0" subtype="0" weight="1.0"/>
 		</spawn>
 		<spawn x="11" y="13">
-			<entity type="1900" variant="0" subtype="0" weight="1.0"/>
+			<entity type="10000" variant="0" subtype="0" weight="1.0"/>
 		</spawn>
 		<spawn x="12" y="13">
-			<entity type="1900" variant="0" subtype="0" weight="1.0"/>
+			<entity type="10000" variant="0" subtype="0" weight="1.0"/>
 		</spawn>
 		<spawn x="13" y="13">
-			<entity type="1900" variant="0" subtype="0" weight="1.0"/>
+			<entity type="10000" variant="0" subtype="0" weight="1.0"/>
 		</spawn>
 		<spawn x="14" y="13">
-			<entity type="1900" variant="0" subtype="0" weight="1.0"/>
+			<entity type="10000" variant="0" subtype="0" weight="1.0"/>
 		</spawn>
 		<spawn x="15" y="13">
-			<entity type="1900" variant="0" subtype="0" weight="1.0"/>
+			<entity type="10000" variant="0" subtype="0" weight="1.0"/>
 		</spawn>
 		<spawn x="16" y="13">
-			<entity type="1900" variant="0" subtype="0" weight="1.0"/>
+			<entity type="10000" variant="0" subtype="0" weight="1.0"/>
 		</spawn>
 		<spawn x="17" y="13">
-			<entity type="1900" variant="0" subtype="0" weight="1.0"/>
+			<entity type="10000" variant="0" subtype="0" weight="1.0"/>
 		</spawn>
 		<spawn x="18" y="13">
-			<entity type="1900" variant="0" subtype="0" weight="1.0"/>
+			<entity type="10000" variant="0" subtype="0" weight="1.0"/>
 		</spawn>
 		<spawn x="19" y="13">
-			<entity type="1900" variant="0" subtype="0" weight="1.0"/>
+			<entity type="10000" variant="0" subtype="0" weight="1.0"/>
 		</spawn>
 		<spawn x="20" y="13">
-			<entity type="1900" variant="0" subtype="0" weight="1.0"/>
+			<entity type="10000" variant="0" subtype="0" weight="1.0"/>
 		</spawn>
 		<spawn x="21" y="13">
-			<entity type="1900" variant="0" subtype="0" weight="1.0"/>
+			<entity type="10000" variant="0" subtype="0" weight="1.0"/>
 		</spawn>
 		<spawn x="22" y="13">
-			<entity type="1900" variant="0" subtype="0" weight="1.0"/>
+			<entity type="10000" variant="0" subtype="0" weight="1.0"/>
 		</spawn>
 		<spawn x="23" y="13">
-			<entity type="1900" variant="0" subtype="0" weight="1.0"/>
+			<entity type="10000" variant="0" subtype="0" weight="1.0"/>
 		</spawn>
 		<spawn x="24" y="13">
-			<entity type="1900" variant="0" subtype="0" weight="1.0"/>
+			<entity type="10000" variant="0" subtype="0" weight="1.0"/>
 		</spawn>
 		<spawn x="25" y="13">
-			<entity type="1900" variant="0" subtype="0" weight="1.0"/>
+			<entity type="10000" variant="0" subtype="0" weight="1.0"/>
 		</spawn>
 	</room>
 	<room variant="887" name="New Room" type="1" subtype="0" shape="1" width="13" height="7" difficulty="10" weight="1.0">

@@ -9,11 +9,18 @@ Fighters = {}
 UIElements = {}
 SHOW_HITBOXES = false
 SLOWDOWN = false
+BG_SPRITE = nil
+BG_SPRITE2 = nil
+BLACKBAR1 = nil
+BLACKBAR2 = nil
+STAGEY = 275
 
 local function onGameStart()
 end
 -- test
 local function onNewRoom()
+
+
 
     print("NEW ROOM")
 
@@ -29,6 +36,21 @@ local function onNewRoom()
         Isaac.GetPlayer(1).Position = Vector(680, 650)
     end
 
+    BG_SPRITE = Sprite()
+    BG_SPRITE:Load("images/background.anm2", true)
+    BG_SPRITE:Play("Idle")
+
+    BG_SPRITE2 = Sprite()
+    BG_SPRITE2:Load("images/background2.anm2", true)
+    BG_SPRITE2:Play("Idle")
+
+    BLACKBAR1 = Sprite()
+    BLACKBAR1:Load("images/blackbar.anm2", true)
+    BLACKBAR1:Play("Idle")
+
+    BLACKBAR2 = Sprite()
+    BLACKBAR2:Load("images/blackbar.anm2", true)
+    BLACKBAR2:Play("Idle")
 end
 
 
@@ -57,20 +79,22 @@ local function startGame()
     end
     Isaac.ExecuteCommand("goto d.900")
 
+    if Isaac.CountEntities(nil, EntityType.ENTITY_PLAYER) == 1 then
+        Isaac.ExecuteCommand("addplayer 1 0")
+    end
 
     for i = 1, Isaac.CountEntities(nil, EntityType.ENTITY_PLAYER) do
         addFighterToGame(Isaac.GetPlayer(i - 1))
     end
 
-    local mainPlayerIndex = Isaac.GetPlayer(0).Index
+    if #Fighters > 1 then
+        if Fighters[2].player.ControllerIndex == 0 then
+            Fighters[2].isDummy = true
+        end
+    end
+
 
     initUI()
-    -- if #Fighters > 1 then
-    --     for i = 2, #Fighters do
-    --         Fighters[i].isDummy = true
-    --     end
-    -- end
-
 end
 
 ---comment
@@ -94,6 +118,27 @@ local function debugText()
 end
 
 local function onTick()
+
+    local room = Game():GetRoom()
+    local offset = room:GetRenderScrollOffset()
+
+
+
+
+    BG_SPRITE2:Render(Vector(0, 225) + offset / 8)
+    BG_SPRITE2:Update()
+
+    BG_SPRITE:Render(Vector(0, 425) + offset)
+    BG_SPRITE:Update()
+
+    BLACKBAR1:Render(Vector(0, 275))
+    BLACKBAR1:Update()
+
+    BLACKBAR2:Render(Vector(0, 0))
+    BLACKBAR2:Update()
+
+    Isaac.RenderText("IsaacFighter", 200, 250, 1, 1, 1, 255)
+
 
 
     for i = 1, #Fighters do

@@ -93,14 +93,16 @@ STATE_DATA[STATE.PUNCH] = {
             frameStart = 0,
         },
         {
-            rect = {0, -60, 64, 28},
+            --rect = {0, -60, 64, 28},
+            rect = {10, -31, 100, 75},
             attached = true,
             isHurtbox = false,
             eventTrigger = "HITBOX1_START",
             stopTrigger = "HITBOX1_END",
         },
         {
-            rect = {0, -60, 48, 32},
+            --rect = {0, -60, 48, 32},
+            rect = {0, -20, 110, 80},
             attached = true,
             isHurtbox = true,
             eventTrigger = "HITBOX1_START",

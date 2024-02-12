@@ -161,6 +161,9 @@ end
 function Fighter:countCombo()
     if self:isPlayerActionable() then
         self.comboCount = 0
+        if self.isDummy then
+            self.health = 200
+        end
     end
 end
 
@@ -195,7 +198,8 @@ end
 
 function Fighter:isOnGround()
     --return Utils:numberIsBasicallyX(self.player.Position.Y, 370)
-    return Utils:numberIsBasicallyX(self.player.Position.Y, 650)
+    --return Utils:numberIsBasicallyX(self.player.Position.Y, 650)
+    return Utils:numberIsBasicallyX(self.player.Position.Y, 690)
 end
 
 function Fighter:isCrouching()
