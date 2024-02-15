@@ -34,6 +34,9 @@ function Fighter:new(player)
         comboCount = 0,
         health = 200,
         isDead = false,
+        storedVelocity = nil,
+        hitstop = 0,
+        storedAction = nil,
     }
 
     self.__index = self
@@ -41,6 +44,22 @@ function Fighter:new(player)
 end
 
 function Fighter:nextFrame()
+
+    if self.hitstop > 0 then
+
+
+        self.player.Velocity = Vector(0, 0)
+
+        self.hitstop = self.hitstop - 1
+        if self.hitstop == 0 then
+            self.sprite:Update()
+            self.player.Velocity = self.storedVelocity
+            self.storedVelocity = nil
+        end
+        return
+    end
+
+
     self.sprite:Update()
 
     if self.hitstunFrames > 0 then
@@ -54,6 +73,40 @@ function Fighter:nextFrame()
     self:checkAnimationFinish()
 end
 
+function Fighter:inputItem()
+    SHOW_HITBOXES = not SHOW_HITBOXES
+end
+
+function Fighter:inputJump()
+    self:tryChangeState(STATE.JUMP)
+end
+
+function Fighter:inputAttackA()
+
+    if self:isCrouching() then
+        self:tryChangeState(STATE.CROUCHKICK)
+    end
+
+    if self:isOnGround() then
+        self:tryChangeState(STATE.UPPERCUT)
+    else
+        self:tryChangeState(STATE.JUMPKICK)
+    end
+    return
+end
+
+function Fighter:inputAttackB()
+    if self:isCrouching() then
+        self:tryChangeState(STATE.CROUCHKICK)
+    end
+
+    if self:isOnGround() then
+        self:tryChangeState(STATE.PUNCH)
+    else
+        self:tryChangeState(STATE.JUMPKICK)
+    end
+    return
+end
 
 function Fighter:inputManager()
     if self.player == nil then
@@ -66,15 +119,44 @@ function Fighter:inputManager()
 
     local controllerID = self.player.ControllerIndex
 
-    if Input.IsActionTriggered(ButtonAction.ACTION_ITEM, controllerID) then
-        SHOW_HITBOXES = not SHOW_HITBOXES
-    end
+    if self.hitstop > 0 then
+        if Input.IsActionTriggered(ButtonAction.ACTION_UP, controllerID) then
+            self.storedAction = ACTION.JUMP
+        end
 
-    if Input.IsActionTriggered(ButtonAction.ACTION_UP, controllerID) then
-        self:tryChangeState(STATE.JUMP)
+        if Input.IsActionTriggered(ButtonAction.ACTION_SHOOTRIGHT, controllerID) then
+            self.storedAction = ACTION.ATTACK_B
+        end
+    
+        if Input.IsActionTriggered(ButtonAction.ACTION_SHOOTLEFT, controllerID) then
+            self.storedAction = ACTION.ATTACK_A
+        end
         return
     end
 
+    if self.storedAction ~= nil then
+        if self.storedAction == ACTION.JUMP then
+            self:inputJump()
+        end
+
+        if self.storedAction == ACTION.ATTACK_A then
+            self:inputAttackA()
+        end
+
+        if self.storedAction == ACTION.ATTACK_B then
+            self:inputAttackB()            
+        end
+        self.storedAction = nil
+    end
+    
+
+    if Input.IsActionTriggered(ButtonAction.ACTION_ITEM, controllerID) then
+        self:inputItem()
+    end
+
+    if Input.IsActionTriggered(ButtonAction.ACTION_UP, controllerID) then
+        self:inputJump()
+    end
 
     if Input.IsActionPressed(ButtonAction.ACTION_DOWN, controllerID) then
         self:tryChangeState(STATE.CROUCH)
@@ -85,43 +167,31 @@ function Fighter:inputManager()
     end
 
     if Input.IsActionTriggered(ButtonAction.ACTION_SHOOTRIGHT, controllerID) then
-
-        if self:isCrouching() then
-            self:tryChangeState(STATE.CROUCHKICK)
-        end
-
-        if self:isOnGround() then
-            self:tryChangeState(STATE.PUNCH)
-        else
-            self:tryChangeState(STATE.JUMPKICK)
-        end
-        return
+        self:inputAttackB()
     end
 
     if Input.IsActionTriggered(ButtonAction.ACTION_SHOOTLEFT, controllerID) then
-
-        if self:isCrouching() then
-            self:tryChangeState(STATE.CROUCHKICK)
-        end
-
-        if self:isOnGround() then
-            self:tryChangeState(STATE.UPPERCUT)
-        else
-            self:tryChangeState(STATE.JUMPKICK)
-        end
-        return
+        self:inputAttackA()
     end
 
     if Input.IsActionPressed(ButtonAction.ACTION_LEFT, controllerID) then
         if self:isOnGround() then
-            self:tryChangeState(STATE.WALKING)
+            if self:isFacingRight() then
+                self:tryChangeState(STATE.WALKINGBWD)
+            else
+                self:tryChangeState(STATE.WALKING)
+            end
         end
         return
     end
 
     if Input.IsActionPressed(ButtonAction.ACTION_RIGHT, controllerID) then
         if self:isOnGround() then
-            self:tryChangeState(STATE.WALKING)
+            if not self:isFacingRight() then
+                self:tryChangeState(STATE.WALKINGBWD)
+            else
+                self:tryChangeState(STATE.WALKING)
+            end
         end
         return
     end
@@ -129,6 +199,11 @@ end
 
 
 function Fighter:animationTriggers()
+
+
+    if self.hitstop > 0 then
+        return
+    end
 
     if STATE_DATA[self:getCurrentState()].hitboxes == nil then
         return
@@ -281,6 +356,14 @@ function Fighter:onStateChange()
     self.hurtboxes = {}
     self.hitEnemyThisState = false
 
+    local state = self.state
+
+    if STATE_DATA[state].moveSpeedModifier ~= nil then
+        self.player.MoveSpeed = STATE_DATA[state].moveSpeedModifier
+    else
+        self.player.MoveSpeed = 1
+    end
+
     if self.state == STATE.JUMP then
         self:jump()
     end
@@ -346,7 +429,7 @@ function Fighter:stateManager()
 
     
     if state == STATE.FREEFALLUP then
-        if self.player.Velocity.Y >= 0 then
+        if self.player.Velocity.Y >= -0.5 then
             self:changeState(STATE.FREEFALLDOWN)
         end
     end
@@ -378,7 +461,7 @@ function Fighter:stateManager()
         end
     end
 
-    if Utils:numberIsBasicallyX(self.player.Velocity.X, 0) and self:getCurrentState() == STATE.WALKING then
+    if Utils:numberIsBasicallyX(self.player.Velocity.X, 0) and (self:getCurrentState() == STATE.WALKING or self:getCurrentState() == STATE.WALKINGBWD) then
         self:changeState(STATE.IDLE)
     end
 end
@@ -446,7 +529,11 @@ function Fighter:addHitbox(hitboxTable)
         rect[1] = -rect[1] - rect[3]
     end
 
-    local hitbox = Hitbox:new(rect, self.player, hitboxTable.attached, hitboxTable.isHurtbox)
+    local hitbox = Hitbox:new(rect, self, hitboxTable.attached, hitboxTable.isHurtbox)
+
+    if hitboxTable.hitstop then
+        hitbox.hitstop = hitboxTable.hitstop
+    end
 
     if hitboxTable.hitVelocity then
         hitbox.hitVelocity = hitboxTable.hitVelocity
@@ -463,14 +550,13 @@ function Fighter:addHitbox(hitboxTable)
     end
 end
 
+
+
 function Fighter:getHit()
     self.hurtboxes = {}
     self.hitboxes = {}
     self:changeState(STATE.GETHIT)
     self.health = self.health - 10
-
-
-
 
     if self.hitboxHitByThisFrame.hitVelocity then
         --self.player:AddVelocity(self.hitboxHitByThisFrame.hitVelocity)
@@ -485,6 +571,16 @@ function Fighter:getHit()
     if self.health <= 0 then
         self.dead = true
     end
+
+    if self.hitboxHitByThisFrame.hitstop then
+        if self:isOnGround() then
+            local hitstopFrames = self.hitboxHitByThisFrame.hitstop
+            self.hitboxHitByThisFrame.owner:applyHitstop(hitstopFrames)
+            self:applyHitstop(hitstopFrames)
+        end
+
+    end
+
 
     self.sprite.Color = Color(255, 0, 0)
     self.comboCount = self.comboCount + 1
@@ -525,6 +621,12 @@ function Fighter:CheckIfHitEnemy()
             end
         end
     end
+end
+
+function Fighter:applyHitstop(amount)
+    self.hitstop = amount
+    self.storedVelocity = self.player.Velocity
+    self.player.Velocity = Vector(0, 0)
 end
 
 function Fighter:render()

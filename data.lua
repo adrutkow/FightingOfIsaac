@@ -17,7 +17,13 @@ STATE = {
     CROUCH = 14,
     CROUCHKICK = 15,
     CROUCHBLOCK = 16,
+    WALKINGBWD = 17,
+}
 
+ACTION = {
+    ATTACK_A = 1,
+    ATTACK_B = 2,
+    JUMP = 3,
 }
 
 local stateCount = 0
@@ -34,6 +40,7 @@ for i = 1, stateCount do
         stopVelocity = false, -- Does this state stop any velocity the character has
         transitions = {-1}, -- Which states can this state transition into, -1 means all of them
         hitTransitions = {}, -- Which states can this state transition into when the player hits the opponent
+        moveSpeedModifier = 1,
         hitboxes = {
             {
                 rect = {-12, 0, 25, 100},
@@ -45,6 +52,7 @@ for i = 1, stateCount do
                 stopTrigger = "", -- Which event kills the hitbox, empty string ignores it
                 hitVelocity = Vector(0, 0), -- Velocity to apply to opponent when he gets hit
                 recoilVelocity = Vector(0, 0), -- Velocity to apply to attacker on opponent blocking the attack
+                hitstop = 0,
             }
         }
     }
@@ -220,6 +228,7 @@ STATE_DATA[STATE.UPPERCUT] = {
             eventTrigger = "HITBOX1_START",
             stopTrigger = "HITBOX1_END",
             hitVelocity = Vector(2, -5),
+            hitstop = 8,
         }
     }
 }
@@ -302,7 +311,7 @@ STATE_DATA[STATE.CROUCHKICK] = {
             frameStart = 0,
         },
         {
-            rect = {8, 0, 45, 15},
+            rect = {8, 0, 45, 26},
             attached = true,
             isHurtbox = false,
             eventTrigger = "HITBOX1_START",
@@ -319,6 +328,22 @@ STATE_DATA[STATE.CROUCHBLOCK] = {
     hitboxes = {
         {
             rect = {-15, 0, 35, 60},
+            attached = true,
+            isHurtbox = true,
+            frameStart = 0,
+        },
+    }
+}
+
+STATE_DATA[STATE.WALKINGBWD] = {
+    animation = "WalkBwd",
+    actionable = true,
+    stopVelocity = false,
+    transitions = {-1},
+    moveSpeedModifier = 0.5,
+    hitboxes = {
+        {
+            rect = {-12, 0, 25, 100},
             attached = true,
             isHurtbox = true,
             frameStart = 0,

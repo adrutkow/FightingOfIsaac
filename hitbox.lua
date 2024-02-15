@@ -27,7 +27,7 @@ function Hitbox:draw()
 
     self.sprite:Play("Idle")
 
-    local owner_pos = Isaac.WorldToScreen(self.owner.Position)
+    local owner_pos = Isaac.WorldToScreen(self.owner.player.Position)
     local hbox_pos = Vector(self.rect[1], self.rect[2])
 
     local x = hbox_pos.X + owner_pos.X
@@ -49,7 +49,7 @@ function Hitbox:draw()
 end
 
 function Hitbox:getWorldRect()
-    local owner_pos = Isaac.WorldToScreen(self.owner.Position)
+    local owner_pos = Isaac.WorldToScreen(self.owner.player.Position)
     local hbox_pos = Vector(self.rect[1], self.rect[2])
     local x = hbox_pos.X + owner_pos.X
     local y = hbox_pos.Y + owner_pos.Y

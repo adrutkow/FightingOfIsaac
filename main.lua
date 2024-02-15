@@ -80,7 +80,7 @@ local function startGame()
     Isaac.ExecuteCommand("goto d.900")
 
     if Isaac.CountEntities(nil, EntityType.ENTITY_PLAYER) == 1 then
-        Isaac.ExecuteCommand("addplayer 1 0")
+        Isaac.ExecuteCommand("addplayer 0 0")
     end
 
     for i = 1, Isaac.CountEntities(nil, EntityType.ENTITY_PLAYER) do
@@ -152,6 +152,8 @@ local function onTick()
         if not skipFrame then 
             Fighters[i]:nextFrame()
         end
+
+
         Fighters[i]:inputManager()
         Fighters[i]:stateManager()
         Fighters[i]:animationTriggers()
