@@ -1,5 +1,6 @@
 FighterMod = RegisterMod("Fighter", 1)
 require("healthbar")
+require("particle")
 local Hitbox = require("hitbox")
 local Fighter = require("fighter")
 local Data = require("data")
@@ -7,6 +8,7 @@ local Utils = require("utils")
 local game = Game()
 Fighters = {}
 UIElements = {}
+Particles = {}
 SHOW_HITBOXES = false
 SLOWDOWN = false
 BG_SPRITE = nil
@@ -195,10 +197,14 @@ local function onTick()
         -- if Fighters[i].isDummy then
         --     Fighters[i].player.Velocity = Vector(0, 10)
         -- end
-        
+
+    end
 
 
-
+    for i = 1, #Particles do
+        if Particles[i] then
+            Particles[i]:tick()
+        end
     end
 
     if SLOWDOWN then

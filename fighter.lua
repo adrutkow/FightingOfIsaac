@@ -220,7 +220,6 @@ function Fighter:animationTriggers()
 
         if self.sprite:IsEventTriggered("HITBOX1_END") then
             if hitboxTable.stopTrigger == "HITBOX1_END" then
-                print("END HITBOX TRIGGERED")
                 self.hitboxes = {}
             end
         end
@@ -351,7 +350,6 @@ function Fighter:block()
 end
 
 function Fighter:onStateChange()
-    print("STATE CHANGED")
     self.hitboxes = {}
     self.hurtboxes = {}
     self.hitEnemyThisState = false
@@ -462,7 +460,10 @@ function Fighter:stateManager()
     end
 
     if Utils:numberIsBasicallyX(self.player.Velocity.X, 0) and (self:getCurrentState() == STATE.WALKING or self:getCurrentState() == STATE.WALKINGBWD) then
-        self:changeState(STATE.IDLE)
+        local controllerID = self.player.ControllerIndex
+        if not Input.IsActionPressed(ButtonAction.ACTION_LEFT, controllerID) and not Input.IsActionPressed(ButtonAction.ACTION_RIGHT, controllerID) then
+            self:changeState(STATE.IDLE)
+        end
     end
 end
 
@@ -558,14 +559,33 @@ function Fighter:getHit()
     self:changeState(STATE.GETHIT)
     self.health = self.health - 10
 
-    if self.hitboxHitByThisFrame.hitVelocity then
+
+
+    local hitboxRect = self.hitboxHitByThisFrame.rect
+    local particle = Particle:new(1, hitboxRect[1] + hitboxRect[3]/2, hitboxRect[2] - hitboxRect[4]/2)
+    local opponent = self.hitboxHitByThisFrame.owner
+
+    table.insert(Particles, particle)
+
+
+    if not self:isOnGround() then
+        self:setVelocity(0, 0)
+        self:applyVelocity(Vector(2, -3 * math.min(1, 1.5 - math.max(0.25, self.comboCount/16))))
+    end
+
+    if self.hitboxHitByThisFrame.hitVelocity and self:isOnGround() then
         --self.player:AddVelocity(self.hitboxHitByThisFrame.hitVelocity)
         self:applyVelocity(self.hitboxHitByThisFrame.hitVelocity)
-    else
-        if not self:isOnGround() then
-            self:setVelocity(0, 0)
-            self:applyVelocity(Vector(1, -3))
-        end
+    -- else
+    --     if not self:isOnGround() then
+    --         self:setVelocity(0, 0)
+    --         self:applyVelocity(Vector(1, -3))
+    --     end
+    end
+
+
+    if self:isAgainstCorner() then
+        opponent:applyVelocity(Vector(1 + self.comboCount * 0.25, 0))
     end
 
     if self.health <= 0 then
@@ -627,6 +647,17 @@ function Fighter:applyHitstop(amount)
     self.hitstop = amount
     self.storedVelocity = self.player.Velocity
     self.player.Velocity = Vector(0, 0)
+end
+
+function Fighter:isAgainstCorner()
+    if self.player.Position.X > 1089 then
+        return true
+    end
+
+    if self.player.Position.X < 71 then
+        return true
+    end
+    return false
 end
 
 function Fighter:render()

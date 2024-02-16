@@ -10,8 +10,20 @@ function Utils:arrayHas(array, value)
     return false
 end
 
+function Utils:getIndexInArray(array, value)
+    local index = 1
+    for i, v in ipairs(array) do
+        if v == value then
+            return index
+        end
+        index = index + 1
+    end
+    return -1
+
+end
+
 function Utils:numberIsBasicallyX(num, X)
-    local epsilon = 0.1
+    local epsilon = 0.25
     return (X - epsilon) < num and num < (X + epsilon)
 end
 
