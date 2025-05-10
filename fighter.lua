@@ -484,6 +484,10 @@ function Fighter:checkAnimationFinish()
         self:changeState(STATE.RECOVER)
     end
 
+    if self.sprite:IsFinished(GetAnimationByState(STATE.CROUCH)) then
+        return
+    end
+
     if self.sprite:IsFinished(GetAnimationByState(STATE.RECOVER)) then
         self:changeState(STATE.IDLE)
     end
