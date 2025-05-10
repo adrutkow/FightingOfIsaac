@@ -93,6 +93,7 @@ STATE_DATA[STATE.PUNCH] = {
     actionable = false,
     stopVelocity = true,
     transitions = {},
+    hitTransitions = {STATE.UPPERCUT},
     hitboxes = {
         {
             rect = {-12, 0, 25, 100},
@@ -107,6 +108,7 @@ STATE_DATA[STATE.PUNCH] = {
             isHurtbox = false,
             eventTrigger = "HITBOX1_START",
             stopTrigger = "HITBOX1_END",
+            hitstop = 2,
         },
         {
             rect = {0, -60, 48, 32},

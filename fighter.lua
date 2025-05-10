@@ -1,4 +1,5 @@
 require("data")
+require("motionInput")
 Fighter = {}
 
 
@@ -15,6 +16,10 @@ function Fighter:new(player)
 
     if charId == 1 then
         sprite:Load("sol/sol.anm2", true)
+    end
+
+    if charId == 2 then
+        sprite:Load("ragna/ragna.anm2", true)
     end
 
     local newObj = {
@@ -37,6 +42,7 @@ function Fighter:new(player)
         storedVelocity = nil,
         hitstop = 0,
         storedAction = nil,
+        motionInputs = {},
     }
 
     self.__index = self
@@ -118,6 +124,11 @@ function Fighter:inputManager()
     end
 
     local controllerID = self.player.ControllerIndex
+
+
+    if Input.IsActionTriggered(ButtonAction.ACTION_DOWN, controllerID) then
+        table.insert(self.motionInputs, MotionInput:new(DIRECTIONS.DOWN))
+    end
 
     if self.hitstop > 0 then
         if Input.IsActionTriggered(ButtonAction.ACTION_UP, controllerID) then
@@ -201,9 +212,9 @@ end
 function Fighter:animationTriggers()
 
 
-    if self.hitstop > 0 then
-        return
-    end
+    -- if self.hitstop > 0 then
+    --     return
+    -- end
 
     if STATE_DATA[self:getCurrentState()].hitboxes == nil then
         return
@@ -271,8 +282,6 @@ function Fighter:isPlayerActionable()
 end
 
 function Fighter:isOnGround()
-    --return Utils:numberIsBasicallyX(self.player.Position.Y, 370)
-    --return Utils:numberIsBasicallyX(self.player.Position.Y, 650)
     return Utils:numberIsBasicallyX(self.player.Position.Y, 690)
 end
 
@@ -554,6 +563,11 @@ end
 
 
 function Fighter:getHit()
+
+    if self.hitstop > 0 then
+        return
+    end
+
     self.hurtboxes = {}
     self.hitboxes = {}
     self:changeState(STATE.GETHIT)

@@ -213,8 +213,6 @@ local function onTick()
         end
     end
 
-
-
     --debugText()
     if Input.IsActionTriggered(ButtonAction.ACTION_BOMB, 0) then
         startGame()
@@ -229,9 +227,6 @@ function FighterMod:debug()
     local newHealthBar = HealthBar:new()
     table.insert(UIElements, newHealthBar)
 end
-
-
-
 
 
 FighterMod:AddCallback(ModCallbacks.MC_POST_PLAYER_INIT, onPlayerInit)
